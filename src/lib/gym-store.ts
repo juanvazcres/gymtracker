@@ -1,58 +1,63 @@
 import { WorkoutDay, WorkoutLog, defaultWorkoutDays } from './gym-types'
+import { openDB } from 'idb'
 
-const WORKOUT_DAYS_KEY = 'gym-workout-days'
-const WORKOUT_LOGS_KEY = 'gym-workout-logs'
+const DB_NAME = 'gym-db'
+const STORE_DAYS = 'workout-days'
+const STORE_LOGS = 'workout-logs'
 
-// Workout Days
-export function getWorkoutDays(): WorkoutDay[] {
-  if (typeof window === 'undefined') return defaultWorkoutDays
-  
-  const stored = localStorage.getItem(WORKOUT_DAYS_KEY)
-  if (!stored) {
-    localStorage.setItem(WORKOUT_DAYS_KEY, JSON.stringify(defaultWorkoutDays))
-    return defaultWorkoutDays
-  }
-  return JSON.parse(stored)
+async function getDB() {
+  return openDB(DB_NAME, 1, {
+    upgrade(db) {
+      db.createObjectStore(STORE_DAYS)
+      db.createObjectStore(STORE_LOGS, { keyPath: 'id' })
+    },
+  })
 }
 
-export function saveWorkoutDays(days: WorkoutDay[]): void {
+// Workout Days
+export async function getWorkoutDays(): Promise<WorkoutDay[]> {
+  if (typeof window === 'undefined') return defaultWorkoutDays
+  
+  const db = await getDB()
+  const stored = await db.get(STORE_DAYS, 'days')
+  
+  if (!stored) {
+    await db.put(STORE_DAYS, defaultWorkoutDays, 'days')
+    return defaultWorkoutDays
+  }
+  return stored
+}
+
+export async function saveWorkoutDays(days: WorkoutDay[]): Promise<void> {
   if (typeof window === 'undefined') return
-  localStorage.setItem(WORKOUT_DAYS_KEY, JSON.stringify(days))
+  const db = await getDB()
+  await db.put(STORE_DAYS, days, 'days')
 }
 
 // Workout Logs
-export function getWorkoutLogs(): WorkoutLog[] {
+export async function getWorkoutLogs(): Promise<WorkoutLog[]> {
   if (typeof window === 'undefined') return []
   
-  const stored = localStorage.getItem(WORKOUT_LOGS_KEY)
-  if (!stored) return []
-  return JSON.parse(stored)
+  const db = await getDB()
+  return await db.getAll(STORE_LOGS)
 }
 
-export function saveWorkoutLog(log: WorkoutLog): void {
+export async function saveWorkoutLog(log: WorkoutLog): Promise<void> {
   if (typeof window === 'undefined') return
   
-  const logs = getWorkoutLogs()
-  const existingIndex = logs.findIndex(l => l.id === log.id)
-  
-  if (existingIndex >= 0) {
-    logs[existingIndex] = log
-  } else {
-    logs.push(log)
-  }
-  
-  localStorage.setItem(WORKOUT_LOGS_KEY, JSON.stringify(logs))
+  const db = await getDB()
+  await db.put(STORE_LOGS, log)
 }
 
-export function deleteWorkoutLog(logId: string): void {
+export async function deleteWorkoutLog(logId: string): Promise<void> {
   if (typeof window === 'undefined') return
   
-  const logs = getWorkoutLogs().filter(l => l.id !== logId)
-  localStorage.setItem(WORKOUT_LOGS_KEY, JSON.stringify(logs))
+  const db = await getDB()
+  await db.delete(STORE_LOGS, logId)
 }
 
-export function getLogsByExercise(exerciseName: string): WorkoutLog[] {
-  const logs = getWorkoutLogs()
+export async function getLogsByExercise(exerciseName: string): Promise<WorkoutLog[]> {
+  const logs = await getWorkoutLogs()
   return logs.filter(log => 
     log.exercises.some(ex => ex.exerciseName === exerciseName)
   ).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())

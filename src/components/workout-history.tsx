@@ -40,10 +40,10 @@ export function WorkoutHistory({ logs, onLogsChange }: WorkoutHistoryProps) {
     })
   }
 
-  const handleDelete = (logId: string) => {
-    deleteWorkoutLog(logId)
+  const handleDelete = async (logId: string) => {
+    await deleteWorkoutLog(logId)
     setDeleteConfirm(null)
-    onLogsChange()
+    await onLogsChange?.()
   }
 
   const sortedLogs = [...logs].sort(

@@ -15,12 +15,17 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('workout')
 
   useEffect(() => {
-    setWorkoutDays(getWorkoutDays())
-    setWorkoutLogs(getWorkoutLogs())
+    (async () => {
+      const days = await getWorkoutDays()
+      const logs = await getWorkoutLogs()
+      setWorkoutDays(days)
+      setWorkoutLogs(logs)
+    })()
   }, [])
 
-  const refreshLogs = () => {
-    setWorkoutLogs(getWorkoutLogs())
+  const refreshLogs = async () => {
+    const logs = await getWorkoutLogs()
+    setWorkoutLogs(logs)
   }
 
   const handleStartWorkout = (day: WorkoutDay) => {
@@ -31,8 +36,8 @@ export default function App() {
     setActiveSession(null)
   }
 
-  const handleSessionSaved = () => {
-    refreshLogs()
+  const handleSessionSaved = async () => {
+    await refreshLogs()
     setActiveSession(null)
     setActiveTab('history')
   }

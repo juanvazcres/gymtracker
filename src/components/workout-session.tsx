@@ -26,7 +26,7 @@ export function WorkoutSession({ day, onClose, onSaved }: WorkoutSessionProps) {
     setExercises(newExercises)
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const log: WorkoutLog = {
       id: generateId(),
       date: new Date().toISOString(),
@@ -36,7 +36,7 @@ export function WorkoutSession({ day, onClose, onSaved }: WorkoutSessionProps) {
       exercises: exercises.filter(ex => ex.sets.length > 0)
     }
     
-    saveWorkoutLog(log)
+    await saveWorkoutLog(log)
     onSaved()
   }
 
