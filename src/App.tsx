@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { WorkoutDay, WorkoutLog } from '@/lib/gym-types'
-import { getWorkoutDays, getWorkoutLogs } from '@/lib/gym-store'
+import { getWorkoutDays, getWorkoutLogs, deleteWorkoutDay } from '@/lib/gym-store'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { WorkoutDayCard } from '@/components/workout-day-card'
 import { WorkoutSession } from '@/components/workout-session'
@@ -63,13 +63,21 @@ export default function App() {
         reps: ''
       }))
     }
-    
+
     setEditingLog(log)
     setActiveSession(day)
   }
 
   const handleEditRoutine = (day: WorkoutDay) => {
     setEditingRoutine(day)
+  }
+
+  const handleDeleteRoutine = async (day: WorkoutDay) => {
+    if (confirm(`¿Estás seguro de que quieres eliminar la rutina "${day.name}"?`)) {
+      await deleteWorkoutDay(day.id)
+      const updatedDays = workoutDays.filter((d) => d.id !== day.id)
+      setWorkoutDays(updatedDays)
+    }
   }
 
   const handleSaveRoutine = async (updatedDay: WorkoutDay) => {
@@ -158,6 +166,7 @@ export default function App() {
                     day={day}
                     onStartWorkout={handleStartWorkout}
                     onEditWorkout={handleEditRoutine}
+                    onDeleteWorkout={handleDeleteRoutine}
                   />
                 ))}
               </div>

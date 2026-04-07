@@ -1,5 +1,5 @@
 import { WorkoutDay } from '@/lib/gym-types'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Dumbbell, Play } from 'lucide-react'
 
@@ -7,9 +7,10 @@ interface WorkoutDayCardProps {
   day: WorkoutDay
   onStartWorkout: (day: WorkoutDay) => void
   onEditWorkout?: (day: WorkoutDay) => void
+  onDeleteWorkout?: (day: WorkoutDay) => void
 }
 
-export function WorkoutDayCard({ day, onStartWorkout, onEditWorkout }: WorkoutDayCardProps) {
+export function WorkoutDayCard({ day, onStartWorkout, onEditWorkout, onDeleteWorkout }: WorkoutDayCardProps) {
   return (
     <Card className="border-border/50 hover:border-primary/30 transition-colors">
       <CardHeader className="pb-3">
@@ -24,7 +25,7 @@ export function WorkoutDayCard({ day, onStartWorkout, onEditWorkout }: WorkoutDa
             </div>
           </div>
           <div className="flex gap-2">
-            <Button 
+            <Button
               onClick={() => onEditWorkout?.(day)}
               size="sm"
               variant="outline"
@@ -32,7 +33,7 @@ export function WorkoutDayCard({ day, onStartWorkout, onEditWorkout }: WorkoutDa
             >
               Editar
             </Button>
-            <Button 
+            <Button
               onClick={() => onStartWorkout(day)}
               size="sm"
               className="gap-2"
@@ -59,7 +60,7 @@ export function WorkoutDayCard({ day, onStartWorkout, onEditWorkout }: WorkoutDa
               ))}
             </ul>
           </div>
-          
+
           {/* Exercises Section */}
           <div>
             <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-2">
@@ -67,7 +68,7 @@ export function WorkoutDayCard({ day, onStartWorkout, onEditWorkout }: WorkoutDa
             </h4>
             <div className="grid gap-2">
               {day.exercises.map((exercise, index) => (
-                <div 
+                <div
                   key={exercise.id}
                   className="flex items-center justify-between py-2 px-3 rounded-lg bg-secondary/50"
                 >
@@ -87,6 +88,16 @@ export function WorkoutDayCard({ day, onStartWorkout, onEditWorkout }: WorkoutDa
           </div>
         </div>
       </CardContent>
+      <CardFooter>
+        <Button
+          onClick={() => onDeleteWorkout?.(day)}
+          size="sm"
+          variant="outline"
+          className="gap-2"
+        >
+          Eliminar
+        </Button>
+      </CardFooter>
     </Card>
   )
 }

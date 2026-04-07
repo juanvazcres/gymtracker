@@ -17,10 +17,10 @@ async function getDB() {
 // Workout Days
 export async function getWorkoutDays(): Promise<WorkoutDay[]> {
   if (typeof window === 'undefined') return defaultWorkoutDays
-  
+
   const db = await getDB()
   const stored = await db.get(STORE_DAYS, 'days')
-  
+
   if (!stored) {
     await db.put(STORE_DAYS, defaultWorkoutDays, 'days')
     return defaultWorkoutDays
@@ -34,31 +34,39 @@ export async function saveWorkoutDays(days: WorkoutDay[]): Promise<void> {
   await db.put(STORE_DAYS, days, 'days')
 }
 
+export async function deleteWorkoutDay(dayId: string): Promise<void> {
+  if (typeof window === 'undefined') return
+  const db = await getDB()
+  const days = await db.get(STORE_DAYS, 'days')
+  const updatedDays = days.filter((d: WorkoutDay) => d.id !== dayId)
+  await db.put(STORE_DAYS, updatedDays, 'days')
+}
+
 // Workout Logs
 export async function getWorkoutLogs(): Promise<WorkoutLog[]> {
   if (typeof window === 'undefined') return []
-  
+
   const db = await getDB()
   return await db.getAll(STORE_LOGS)
 }
 
 export async function saveWorkoutLog(log: WorkoutLog): Promise<void> {
   if (typeof window === 'undefined') return
-  
+
   const db = await getDB()
   await db.put(STORE_LOGS, log)
 }
 
 export async function deleteWorkoutLog(logId: string): Promise<void> {
   if (typeof window === 'undefined') return
-  
+
   const db = await getDB()
   await db.delete(STORE_LOGS, logId)
 }
 
 export async function getLogsByExercise(exerciseName: string): Promise<WorkoutLog[]> {
   const logs = await getWorkoutLogs()
-  return logs.filter(log => 
+  return logs.filter(log =>
     log.exercises.some(ex => ex.exerciseName === exerciseName)
   ).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 }
