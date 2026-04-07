@@ -7,13 +7,14 @@ import { ArrowLeft, Save, Clock } from 'lucide-react'
 
 interface WorkoutSessionProps {
   day: WorkoutDay
+  initialLog?: WorkoutLog
   onClose: () => void
   onSaved: () => void
 }
 
-export function WorkoutSession({ day, onClose, onSaved }: WorkoutSessionProps) {
+export function WorkoutSession({ day, initialLog, onClose, onSaved }: WorkoutSessionProps) {
   const [exercises, setExercises] = useState<LoggedExercise[]>(
-    day.exercises.map(ex => ({
+    initialLog?.exercises || day.exercises.map(ex => ({
       exerciseId: ex.id,
       exerciseName: ex.name,
       sets: []
@@ -28,8 +29,8 @@ export function WorkoutSession({ day, onClose, onSaved }: WorkoutSessionProps) {
 
   const handleSave = async () => {
     const log: WorkoutLog = {
-      id: generateId(),
-      date: new Date().toISOString(),
+      id: initialLog?.id || generateId(),
+      date: initialLog?.date || new Date().toISOString(),
       dayId: day.id,
       dayNumber: day.dayNumber,
       dayName: day.name,

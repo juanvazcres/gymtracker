@@ -6,9 +6,10 @@ import { Dumbbell, Play } from 'lucide-react'
 interface WorkoutDayCardProps {
   day: WorkoutDay
   onStartWorkout: (day: WorkoutDay) => void
+  onEditWorkout?: (day: WorkoutDay) => void
 }
 
-export function WorkoutDayCard({ day, onStartWorkout }: WorkoutDayCardProps) {
+export function WorkoutDayCard({ day, onStartWorkout, onEditWorkout }: WorkoutDayCardProps) {
   return (
     <Card className="border-border/50 hover:border-primary/30 transition-colors">
       <CardHeader className="pb-3">
@@ -22,14 +23,24 @@ export function WorkoutDayCard({ day, onStartWorkout }: WorkoutDayCardProps) {
               <p className="text-sm text-muted-foreground">{day.exercises.length} ejercicios</p>
             </div>
           </div>
-          <Button 
-            onClick={() => onStartWorkout(day)}
-            size="sm"
-            className="gap-2"
-          >
-            <Play className="h-4 w-4" />
-            Iniciar
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => onEditWorkout?.(day)}
+              size="sm"
+              variant="outline"
+              className="gap-2"
+            >
+              Editar
+            </Button>
+            <Button 
+              onClick={() => onStartWorkout(day)}
+              size="sm"
+              className="gap-2"
+            >
+              <Play className="h-4 w-4" />
+              Iniciar
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>

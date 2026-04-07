@@ -16,9 +16,10 @@ import { Calendar, ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
 interface WorkoutHistoryProps {
   logs: WorkoutLog[]
   onLogsChange: () => void
+  onEditLog?: (log: WorkoutLog) => void
 }
 
-export function WorkoutHistory({ logs, onLogsChange }: WorkoutHistoryProps) {
+export function WorkoutHistory({ logs, onLogsChange, onEditLog }: WorkoutHistoryProps) {
   const [expandedLog, setExpandedLog] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
@@ -130,7 +131,17 @@ export function WorkoutHistory({ logs, onLogsChange }: WorkoutHistoryProps) {
                     </div>
                   ))}
 
-                  <div className="pt-2 border-t border-border/50">
+                  <div className="pt-2 border-t border-border/50 flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onEditLog?.(log)
+                      }}
+                    >
+                      Editar Sesion
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"

@@ -12,11 +12,11 @@ interface ExerciseLoggerProps {
   onUpdateSets: (sets: LoggedSet[]) => void
 }
 
-export function ExerciseLogger({ 
-  exercise, 
-  exerciseNumber, 
-  loggedSets, 
-  onUpdateSets 
+export function ExerciseLogger({
+  exercise,
+  exerciseNumber,
+  loggedSets,
+  onUpdateSets
 }: ExerciseLoggerProps) {
   const [isExpanded, setIsExpanded] = useState(true)
 
@@ -53,17 +53,16 @@ export function ExerciseLogger({
 
   return (
     <Card className={`border-border/50 transition-all ${isComplete ? 'border-primary/30 bg-primary/5' : ''}`}>
-      <CardHeader 
-        className="pb-2 cursor-pointer" 
+      <CardHeader
+        className="pb-2 cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold ${
-              isComplete 
-                ? 'bg-primary text-primary-foreground' 
+            <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold ${isComplete
+                ? 'bg-primary text-primary-foreground'
                 : 'bg-secondary text-foreground'
-            }`}>
+              }`}>
               {isComplete ? <Check className="h-4 w-4" /> : exerciseNumber}
             </span>
             <div>
@@ -78,19 +77,19 @@ export function ExerciseLogger({
           </div>
         </div>
       </CardHeader>
-      
+
       {isExpanded && (
         <CardContent className="pt-2">
           <div className="space-y-2">
             {loggedSets.map((set, index) => (
-              <div 
+              <div
                 key={index}
                 className="flex items-center gap-2 py-2 px-3 rounded-lg bg-secondary/30"
               >
                 <span className="w-8 text-sm font-medium text-muted-foreground">
                   {set.setNumber}.
                 </span>
-                
+
                 {exercise.isTimeBased ? (
                   <div className="flex-1">
                     <Input
@@ -133,7 +132,7 @@ export function ExerciseLogger({
                     />
                   </>
                 )}
-                
+
                 <Button
                   variant="ghost"
                   size="sm"
@@ -144,8 +143,8 @@ export function ExerciseLogger({
                 </Button>
               </div>
             ))}
-            
-            <Button
+
+            {exercise.sets > loggedSets.length && <Button
               variant="outline"
               size="sm"
               onClick={addSet}
@@ -153,7 +152,7 @@ export function ExerciseLogger({
             >
               <Plus className="h-4 w-4" />
               Agregar serie
-            </Button>
+            </Button>}
           </div>
         </CardContent>
       )}

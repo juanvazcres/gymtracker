@@ -6,12 +6,16 @@ import { WorkoutDayCard } from '@/components/workout-day-card'
 import { WorkoutSession } from '@/components/workout-session'
 import { WorkoutHistory } from '@/components/workout-history'
 import { ProgressCharts } from '@/components/progress-charts'
+import { RoutineEditor } from '@/components/routine-editor'
+import { saveWorkoutDays } from '@/lib/gym-store'
 import { Dumbbell, Calendar, TrendingUp } from 'lucide-react'
 
 export default function App() {
   const [workoutDays, setWorkoutDays] = useState<WorkoutDay[]>([])
   const [workoutLogs, setWorkoutLogs] = useState<WorkoutLog[]>([])
   const [activeSession, setActiveSession] = useState<WorkoutDay | null>(null)
+  const [editingRoutine, setEditingRoutine] = useState<WorkoutDay | null>(null)
+  const [editingLog, setEditingLog] = useState<WorkoutLog | null>(null)
   const [activeTab, setActiveTab] = useState('workout')
 
   useEffect(() => {
@@ -34,12 +38,45 @@ export default function App() {
 
   const handleCloseSession = () => {
     setActiveSession(null)
+    setEditingLog(null)
   }
 
   const handleSessionSaved = async () => {
     await refreshLogs()
     setActiveSession(null)
+    setEditingLog(null)
     setActiveTab('history')
+  }
+
+  const handleEditLog = (log: WorkoutLog) => {
+    // Determine the day for target sets/warmup if available
+    const day = workoutDays.find(d => d.id === log.dayId) || {
+      id: log.dayId,
+      dayNumber: log.dayNumber,
+      name: log.dayName,
+      muscleGroups: '',
+      warmup: [],
+      exercises: log.exercises.map(ex => ({
+        id: ex.exerciseId,
+        name: ex.exerciseName,
+        sets: ex.sets.length,
+        reps: ''
+      }))
+    }
+    
+    setEditingLog(log)
+    setActiveSession(day)
+  }
+
+  const handleEditRoutine = (day: WorkoutDay) => {
+    setEditingRoutine(day)
+  }
+
+  const handleSaveRoutine = async (updatedDay: WorkoutDay) => {
+    const newDays = workoutDays.map((d) => (d.id === updatedDay.id ? updatedDay : d))
+    setWorkoutDays(newDays)
+    await saveWorkoutDays(newDays)
+    setEditingRoutine(null)
   }
 
   // Get stats
@@ -86,6 +123,7 @@ export default function App() {
         {activeSession ? (
           <WorkoutSession
             day={activeSession}
+            initialLog={editingLog || undefined}
             onClose={handleCloseSession}
             onSaved={handleSessionSaved}
           />
@@ -119,6 +157,7 @@ export default function App() {
                     key={day.id}
                     day={day}
                     onStartWorkout={handleStartWorkout}
+                    onEditWorkout={handleEditRoutine}
                   />
                 ))}
               </div>
@@ -131,7 +170,7 @@ export default function App() {
                   Revisa tus sesiones anteriores
                 </p>
               </div>
-              <WorkoutHistory logs={workoutLogs} onLogsChange={refreshLogs} />
+              <WorkoutHistory logs={workoutLogs} onLogsChange={refreshLogs} onEditLog={handleEditLog} />
             </TabsContent>
 
             <TabsContent value="progress">
@@ -144,6 +183,15 @@ export default function App() {
               <ProgressCharts logs={workoutLogs} />
             </TabsContent>
           </Tabs>
+        )}
+
+        {editingRoutine && (
+          <RoutineEditor
+            day={editingRoutine}
+            isOpen={!!editingRoutine}
+            onClose={() => setEditingRoutine(null)}
+            onSave={handleSaveRoutine}
+          />
         )}
       </main>
     </div>
