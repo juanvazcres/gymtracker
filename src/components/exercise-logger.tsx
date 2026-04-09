@@ -27,6 +27,7 @@ export function ExerciseLogger({
       weight: lastSet?.weight || 0,
       weightUnit: lastSet?.weightUnit || 'kg',
       reps: lastSet?.reps || 10,
+      rir: lastSet?.rir,
       duration: exercise.isTimeBased ? (lastSet?.duration || exercise.reps) : undefined
     }
     onUpdateSets([...loggedSets, newSet])
@@ -60,8 +61,8 @@ export function ExerciseLogger({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold ${isComplete
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-foreground'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-secondary text-foreground'
               }`}>
               {isComplete ? <Check className="h-4 w-4" /> : exerciseNumber}
             </span>
@@ -128,6 +129,15 @@ export function ExerciseLogger({
                       value={set.reps || ''}
                       onChange={(e) => updateSet(index, { reps: parseInt(e.target.value) || 0 })}
                       placeholder="Reps"
+                      className="h-8 w-16 text-center"
+                    />
+                    <span className="text-muted-foreground">-</span>
+                    <Input
+                      type="number"
+                      value={set.rir ?? ''}
+                      onChange={(e) => updateSet(index, { rir: e.target.value === '' ? undefined : parseInt(e.target.value) || 0 })}
+                      placeholder="RIR"
+                      title="Repeticiones en Reserva"
                       className="h-8 w-16 text-center"
                     />
                   </>

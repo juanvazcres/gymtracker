@@ -7,8 +7,9 @@ import { WorkoutSession } from '@/components/workout-session'
 import { WorkoutHistory } from '@/components/workout-history'
 import { ProgressCharts } from '@/components/progress-charts'
 import { RoutineEditor } from '@/components/routine-editor'
-import { saveWorkoutDays } from '@/lib/gym-store'
-import { Dumbbell, Calendar, TrendingUp } from 'lucide-react'
+import { saveWorkoutDays, generateId } from '@/lib/gym-store'
+import { Dumbbell, Calendar, TrendingUp, Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default function App() {
   const [workoutDays, setWorkoutDays] = useState<WorkoutDay[]>([])
@@ -72,6 +73,18 @@ export default function App() {
     setEditingRoutine(day)
   }
 
+  const handleAddRoutine = () => {
+    const newDay: WorkoutDay = {
+      id: generateId(),
+      dayNumber: workoutDays.length + 1,
+      name: 'Nueva rutina',
+      muscleGroups: '',
+      warmup: [],
+      exercises: []
+    }
+    setEditingRoutine(newDay)
+  }
+
   const handleDeleteRoutine = async (day: WorkoutDay) => {
     if (confirm(`¿Estás seguro de que quieres eliminar la rutina "${day.name}"?`)) {
       await deleteWorkoutDay(day.id)
@@ -81,7 +94,11 @@ export default function App() {
   }
 
   const handleSaveRoutine = async (updatedDay: WorkoutDay) => {
-    const newDays = workoutDays.map((d) => (d.id === updatedDay.id ? updatedDay : d))
+    const exists = workoutDays.some(d => d.id === updatedDay.id)
+    const newDays = exists 
+      ? workoutDays.map((d) => (d.id === updatedDay.id ? updatedDay : d))
+      : [...workoutDays, updatedDay]
+      
     setWorkoutDays(newDays)
     await saveWorkoutDays(newDays)
     setEditingRoutine(null)
@@ -153,11 +170,17 @@ export default function App() {
             </TabsList>
 
             <TabsContent value="workout" className="space-y-4">
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold mb-1">Rutina de entrenamiento</h2>
-                <p className="text-sm text-muted-foreground">
-                  Selecciona el dia que vas a entrenar
-                </p>
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold mb-1">Rutina de entrenamiento</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Selecciona el dia que vas a entrenar
+                  </p>
+                </div>
+                <Button onClick={handleAddRoutine} size="sm" className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  <span className="hidden sm:inline">Nueva Rutina</span>
+                </Button>
               </div>
               <div className="grid gap-4">
                 {workoutDays.map((day) => (

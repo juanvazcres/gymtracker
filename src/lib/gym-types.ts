@@ -26,6 +26,7 @@ export interface LoggedSet {
   weight?: number
   weightUnit?: 'kg' | 'lbs'
   reps?: number
+  rir?: number
   duration?: string // For timed exercises like "40s"
 }
 
