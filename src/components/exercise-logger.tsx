@@ -26,7 +26,7 @@ export function ExerciseLogger({
       setNumber: loggedSets.length + 1,
       weight: lastSet?.weight || 0,
       weightUnit: lastSet?.weightUnit || 'kg',
-      reps: lastSet?.reps || 10,
+      reps: lastSet?.reps,
       rir: lastSet?.rir,
       duration: exercise.isTimeBased ? (lastSet?.duration || exercise.reps) : undefined
     }
@@ -85,7 +85,7 @@ export function ExerciseLogger({
             {loggedSets.map((set, index) => (
               <div
                 key={index}
-                className="flex items-center gap-2 py-2 px-3 rounded-lg bg-secondary/30"
+                className="flex items-center gap-2 py-2 px-3 rounded-lg bg-secondary/30 flex-wrap justify-between"
               >
                 <span className="w-8 text-sm font-medium text-muted-foreground">
                   {set.setNumber}.
@@ -123,23 +123,24 @@ export function ExerciseLogger({
                         {set.weightUnit || 'kg'}
                       </Button>
                     </div>
-                    <span className="text-muted-foreground">-</span>
-                    <Input
-                      type="number"
-                      value={set.reps || ''}
-                      onChange={(e) => updateSet(index, { reps: parseInt(e.target.value) || 0 })}
-                      placeholder="Reps"
-                      className="h-8 w-16 text-center"
-                    />
-                    <span className="text-muted-foreground">-</span>
-                    <Input
-                      type="number"
-                      value={set.rir ?? ''}
-                      onChange={(e) => updateSet(index, { rir: e.target.value === '' ? undefined : parseInt(e.target.value) || 0 })}
-                      placeholder="RIR"
-                      title="Repeticiones en Reserva"
-                      className="h-8 w-16 text-center"
-                    />
+                    <div className="flex items-center gap-1 flex-1">
+                      <Input
+                        type="number"
+                        value={set.reps || ''}
+                        onChange={(e) => updateSet(index, { reps: parseInt(e.target.value) || 0 })}
+                        placeholder="Reps"
+                        className="h-8 w-16 text-center"
+                      />
+                      <span className="text-muted-foreground">|</span>
+                      <Input
+                        type="number"
+                        value={set.rir ?? ''}
+                        onChange={(e) => updateSet(index, { rir: e.target.value === '' ? undefined : parseInt(e.target.value) || 0 })}
+                        placeholder="RIR"
+                        title="Repeticiones en Reserva"
+                        className="h-8 w-16 text-center"
+                      />
+                    </div>
                   </>
                 )}
 

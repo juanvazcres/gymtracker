@@ -71,8 +71,8 @@ export function WorkoutHistory({ logs, onLogsChange, onEditLog }: WorkoutHistory
 
         return (
           <Card key={log.id} className="border-border/50">
-            <CardHeader 
-              className="pb-2 cursor-pointer" 
+            <CardHeader
+              className="pb-2 cursor-pointer"
               onClick={() => setExpandedLog(isExpanded ? null : log.id)}
             >
               <div className="flex items-center justify-between">
@@ -113,7 +113,7 @@ export function WorkoutHistory({ logs, onLogsChange, onEditLog }: WorkoutHistory
                       </h4>
                       <div className="grid gap-1 pl-7">
                         {exercise.sets.map((set, setIndex) => (
-                          <div 
+                          <div
                             key={setIndex}
                             className="text-sm text-muted-foreground flex items-center gap-2"
                           >
@@ -122,7 +122,7 @@ export function WorkoutHistory({ logs, onLogsChange, onEditLog }: WorkoutHistory
                               <span>{set.duration}</span>
                             ) : (
                               <span>
-                                {set.weight}{set.weightUnit} - {set.reps} reps
+                                {set.weight}{set.weightUnit} - {set.reps} reps - RIR {set.rir || 0}
                               </span>
                             )}
                           </div>
@@ -175,8 +175,8 @@ export function WorkoutHistory({ logs, onLogsChange, onEditLog }: WorkoutHistory
             <Button variant="outline" onClick={() => setDeleteConfirm(null)}>
               Cancelar
             </Button>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
             >
               Eliminar

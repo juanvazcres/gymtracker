@@ -46,7 +46,7 @@ export function ProgressCharts({ logs }: ProgressChartsProps) {
     if (!selectedExercise) return []
 
     const exerciseLogs = logs
-      .filter(log => 
+      .filter(log =>
         log.exercises.some(ex => ex.exerciseName === selectedExercise)
       )
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -76,9 +76,9 @@ export function ProgressCharts({ logs }: ProgressChartsProps) {
       )
 
       return {
-        date: new Date(log.date).toLocaleDateString('es-ES', { 
-          day: '2-digit', 
-          month: 'short' 
+        date: new Date(log.date).toLocaleDateString('es-ES', {
+          day: '2-digit',
+          month: 'short'
         }),
         fullDate: log.date,
         maxWeight: Math.round(maxWeight * 10) / 10,
@@ -161,26 +161,26 @@ export function ProgressCharts({ logs }: ProgressChartsProps) {
           </CardHeader>
           <CardContent>
             <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" className="bg-muted-foreground">
                 <LineChart data={progressData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis 
-                    dataKey="date" 
+                  <XAxis
+                    dataKey="date"
                     stroke="hsl(var(--muted-foreground))"
                     fontSize={12}
                   />
-                  <YAxis 
+                  <YAxis
                     yAxisId="left"
                     stroke="hsl(var(--muted-foreground))"
                     fontSize={12}
                   />
-                  <YAxis 
-                    yAxisId="right" 
+                  <YAxis
+                    yAxisId="right"
                     orientation="right"
                     stroke="hsl(var(--muted-foreground))"
                     fontSize={12}
                   />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
@@ -228,7 +228,7 @@ export function ProgressCharts({ logs }: ProgressChartsProps) {
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold">
-                  {progressData.length >= 2 
+                  {progressData.length >= 2
                     ? `${(progressData[progressData.length - 1]!.maxWeight - progressData[0]!.maxWeight) > 0 ? '+' : ''}${(progressData[progressData.length - 1]!.maxWeight - progressData[0]!.maxWeight).toFixed(1)}kg`
                     : '-'}
                 </p>
